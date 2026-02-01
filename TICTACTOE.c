@@ -27,6 +27,14 @@ New - N
 Exit - E
 */
 
+char *create_board_internal(void);
+void destroy_board_internal(char **board);
+void print_board_internal(char *board);
+char win_check_internal(char *board,char symbol);
+bool make_move_internal(char *board, unsigned int tile, char symbol);
+unsigned int ask_tile_internal(void);
+void move_maker_internal(char *board, char symbol);
+
 char *create_board_internal(void)
 {
     char *board = malloc(9*sizeof(char));
@@ -93,23 +101,16 @@ char win_check_internal(char *board,char symbol)
 }
 #define win_check(board,symbol) win_check_internal(board,symbol)
 
-typedef enum
+bool make_move_internal(char *board, unsigned int tile, char symbol)
 {
-    INVALIDBOARD = 0,
-    VALIDBOARD = 1
-} 
-MoveStatus;
-
-MoveStatus make_move_internal(char *board, unsigned int tile, char symbol)
-{
-    if(board==nullptr)return INVALIDBOARD;
+    if(board==nullptr)return false;
     if( (tile>8) || board[tile]=='X' || board[tile]=='O' )
     {
         puts("Illegal Move. Try Again");
-        return INVALIDBOARD;
+        return false;
     }
     board[tile]=symbol;
-    return VALIDBOARD;
+    return true;
 }
 #define make_move(board,tile,symbol) make_move_internal(board,tile,symbol)
 
@@ -139,25 +140,27 @@ unsigned int ask_tile_internal(void)
 
 void move_maker_internal(char *board, char symbol)
 {
-    while(make_move(board,ask_tile(),symbol)==INVALIDBOARD);
+    while(make_move(board,ask_tile(),symbol)==false);
     return;
 }
 #define move_maker(board,symbol) move_maker_internal(board,symbol)
 
-typedef struct
+typedef struct 
 {
-    char symbol;
     char name[27];
+    char symbol;
 } 
 Player;
 
-Player *player_initializer(void)
+Player *player_initializer_internal(void)
 {
     Player *new_player = malloc(sizeof(Player));
+    if(new_player==nullptr)return nullptr;
     fgets(new_player->name,sizeof(new_player->name),stdin);
     new_player->name[strcspn(new_player->name,"\n")] = '\0';
     return new_player;
 }
+#define player_initializer() player_initializer_internal()
 
 void two_player_game_internal()
 {
@@ -181,7 +184,6 @@ void two_player_game_internal()
         if(win_check(myboard,turn->symbol)==turn->symbol)
         {
             printf("%s Wins",turn->name);
-            break;
             destroy_board(myboard);
             return;
         }
@@ -190,9 +192,10 @@ void two_player_game_internal()
     destroy_board(myboard);
     return;
 }
+#define two_player_game() two_player_game_internal()
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    two_player_game_internal();
+    two_player_game();
     return EXIT_SUCCESS;
 }
