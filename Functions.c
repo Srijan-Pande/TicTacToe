@@ -29,13 +29,13 @@ char *create_board_internal(void)
 {
     char *board = malloc(9*sizeof(char));
     if(board==nullptr)return nullptr;
-    for(int i = 0; i<9; i++)
+    for(unsigned int i = 0; i<9; i++)
     {
         board[i]='0'+i;
     }
     return board;
 }
-#define create_board(void) create_board_internal(void)
+#define create_board() create_board_internal()
 
 void destroy_board_internal(char **board)
 {
@@ -45,6 +45,20 @@ void destroy_board_internal(char **board)
     return;
 }
 #define destroy_board(board) destroy_board_internal((char **)(&board))
+
+void print_board_internal(char *board)
+{
+    for(unsigned int i = 0; i<9; i++)
+    {
+        printf("%c",board[i]);
+        if(i%3==2)
+        {
+            puts("");
+        }
+    }
+    return;
+}
+#define print_board(board) print_board_internal(board)
 
 char win_check(char *board,char symbol)
 {
