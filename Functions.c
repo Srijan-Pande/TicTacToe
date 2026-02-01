@@ -4,6 +4,7 @@
 #include<string.h>
 #include<stdbool.h>
 #include<errno.h>
+#include<limits.h>
 
 /*
     L C R
@@ -98,6 +99,26 @@ void make_move_internal(char *board, unsigned int tile, char symbol)
     return;
 }
 #define make_move(board,tile,symbol) make_move_internal(board,tile,symbol)
+
+unsigned int ask_move_internal(void)
+{
+    puts("Enter Your Move:");
+    char holder = getchar();
+    unsigned int tile;
+
+    while(getchar()!='\n');
+
+    if(holder>='0'&&holder<='8')
+    {
+        tile = holder - '0';
+        return tile;
+    }
+    else 
+    {
+        return UINT_MAX;
+    }
+}
+#define ask_move() ask_move_internal()
 
 int main(int argc, char *argv[])
 {
