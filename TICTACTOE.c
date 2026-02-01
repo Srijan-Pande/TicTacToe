@@ -7,6 +7,8 @@
 #include<limits.h>
 #include<stdint.h>
 
+#include"TICTACTOE.h"
+
 /*
     L C R
 T   0 1 2
@@ -27,13 +29,7 @@ New - N
 Exit - E
 */
 
-typedef struct 
-{
-    char name[27];
-    char symbol;
-} 
-Player;
-
+/*
 char *create_board_internal(void);
 void destroy_board_internal(char **board);
 void print_board_internal(char *board);
@@ -43,6 +39,19 @@ unsigned int ask_tile_internal(void);
 void move_maker_internal(char *board, char symbol);
 Player *player_initializer_internal(void);
 void two_player_game_internal();
+*/
+
+/*
+#define create_board() create_board_internal()
+#define destroy_board(board) destroy_board_internal(&(board))
+#define print_board(board) print_board_internal(board)
+#define win_check(board,symbol) win_check_internal(board,symbol)
+#define make_move(board,tile,symbol) make_move_internal(board,tile,symbol)
+#define ask_tile() ask_tile_internal()
+#define move_maker(board,symbol) move_maker_internal(board,symbol)
+#define player_initializer() player_initializer_internal()
+#define two_player_game() two_player_game_internal()
+*/
 
 char *create_board_internal(void)
 {
@@ -54,7 +63,7 @@ char *create_board_internal(void)
     }
     return board;
 }
-#define create_board() create_board_internal()
+
 
 void destroy_board_internal(char **board)
 {
@@ -63,7 +72,6 @@ void destroy_board_internal(char **board)
     *board=nullptr;
     return;
 }
-#define destroy_board(board) destroy_board_internal(&(board))
 
 void print_board_internal(char *board)
 {
@@ -78,7 +86,6 @@ void print_board_internal(char *board)
     }
     return;
 }
-#define print_board(board) print_board_internal(board)
 
 char win_check_internal(char *board,char symbol)
 {
@@ -108,7 +115,7 @@ char win_check_internal(char *board,char symbol)
 
     return ' ';
 }
-#define win_check(board,symbol) win_check_internal(board,symbol)
+
 
 bool make_move_internal(char *board, unsigned int tile, char symbol)
 {
@@ -121,7 +128,6 @@ bool make_move_internal(char *board, unsigned int tile, char symbol)
     board[tile]=symbol;
     return true;
 }
-#define make_move(board,tile,symbol) make_move_internal(board,tile,symbol)
 
 unsigned int ask_tile_internal(void)
 {
@@ -145,14 +151,14 @@ unsigned int ask_tile_internal(void)
         return UINT_MAX;
     }
 }
-#define ask_tile() ask_tile_internal()
+
 
 void move_maker_internal(char *board, char symbol)
 {
     while(make_move(board,ask_tile(),symbol)==false);
     return;
 }
-#define move_maker(board,symbol) move_maker_internal(board,symbol)
+
 
 Player *player_initializer_internal(void)
 {
@@ -162,7 +168,6 @@ Player *player_initializer_internal(void)
     new_player->name[strcspn(new_player->name,"\n")] = '\0';
     return new_player;
 }
-#define player_initializer() player_initializer_internal()
 
 void two_player_game_internal()
 {
@@ -187,11 +192,14 @@ void two_player_game_internal()
         {
             printf("%s Wins",turn->name);
             destroy_board(myboard);
+            free(player1);
+            free(player2);
             return;
         }
     }
     puts("Drawn Game");
     destroy_board(myboard);
+    free(player1);
+    free(player2);
     return;
 }
-#define two_player_game() two_player_game_internal()
