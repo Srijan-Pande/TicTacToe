@@ -29,7 +29,10 @@ char *create_board_internal(void)
 {
     char *board = malloc(9*sizeof(char));
     if(board==nullptr)return nullptr;
-    memset(board,' ',9);
+    for(int i = 0; i<9; i++)
+    {
+        board[i]='0'+i;
+    }
     return board;
 }
 #define create_board(void) create_board_internal(void)
@@ -43,52 +46,30 @@ void destroy_board_internal(char **board)
 }
 #define destroy_board(board) destroy_board_internal((char **)(&board))
 
-char win_check(char *board)
+char win_check(char *board,char symbol)
 {
     if(!board)return '\0';
 
     if
     (
-        board[0]=='X'&&board[1]=='X'&&board[2]=='X'
+        board[0]==symbol&&board[1]==symbol&&board[2]==symbol
         ||
-        board[3]=='X'&&board[4]=='X'&&board[5]=='X'
+        board[3]==symbol&&board[4]==symbol&&board[5]==symbol
         ||
-        board[6]=='X'&&board[7]=='X'&&board[8]=='X'
+        board[6]==symbol&&board[7]==symbol&&board[8]==symbol
         ||
-        board[0]=='X'&&board[3]=='X'&&board[6]=='X'
+        board[0]==symbol&&board[3]==symbol&&board[6]==symbol
         ||
-        board[1]=='X'&&board[4]=='X'&&board[7]=='X'
+        board[1]==symbol&&board[4]==symbol&&board[7]==symbol
         ||
-        board[2]=='X'&&board[5]=='X'&&board[8]=='X'
+        board[2]==symbol&&board[5]==symbol&&board[8]==symbol
         ||
-        board[0]=='X'&&board[4]=='X'&&board[8]=='X'
+        board[0]==symbol&&board[4]==symbol&&board[8]==symbol
         ||
-        board[2]=='X'&&board[4]=='X'&&board[6]=='X'
+        board[2]==symbol&&board[4]==symbol&&board[6]==symbol
     )
     {
-        return 'X';
-    }
-
-    if
-    (
-        board[0]=='O'&&board[1]=='O'&&board[2]=='O'
-        ||
-        board[3]=='O'&&board[4]=='O'&&board[5]=='O'
-        ||
-        board[6]=='O'&&board[7]=='O'&&board[8]=='O'
-        ||
-        board[0]=='O'&&board[3]=='O'&&board[6]=='O'
-        ||
-        board[1]=='O'&&board[4]=='O'&&board[7]=='O'
-        ||
-        board[2]=='O'&&board[5]=='O'&&board[8]=='O'
-        ||
-        board[0]=='O'&&board[4]=='O'&&board[8]=='O'
-        ||
-        board[2]=='O'&&board[4]=='O'&&board[6]=='O'
-    )
-    {
-        return 'O';
+        return symbol;
     }
 
     return ' ';
