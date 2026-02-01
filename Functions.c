@@ -46,7 +46,7 @@ void destroy_board_internal(char **board)
     *board=nullptr;
     return;
 }
-#define destroy_board(board) destroy_board_internal((char **)(&board))
+#define destroy_board(board) destroy_board_internal(&(board))
 
 void print_board_internal(char *board)
 {
@@ -95,18 +95,18 @@ char win_check_internal(char *board,char symbol)
 
 typedef enum
 {
-    NULLBOARD = 0,
+    INVALIDBOARD = 0,
     VALIDBOARD = 1
 } 
 MoveStatus;
 
 MoveStatus make_move_internal(char *board, unsigned int tile, char symbol)
 {
-    if(board==nullptr)return NULLBOARD;
-    if((tile<0||tile>8)||(board[tile]=='X'||board[tile]=='O'))
+    if(board==nullptr)return INVALIDBOARD;
+    if( (tile>8) || board[tile]=='X' || board[tile]=='O' )
     {
-        puts("Illegal Move");
-
+        puts("Illegal Move. Try Again");
+        return INVALIDBOARD;
     }
     board[tile]=symbol;
     return VALIDBOARD;
@@ -116,10 +116,14 @@ MoveStatus make_move_internal(char *board, unsigned int tile, char symbol)
 unsigned int ask_tile_internal(void)
 {
     puts("Enter Your Move:");
-    char holder = getchar();
+    char holder = fgetc(stdin);
     unsigned int tile;
 
-    while(getchar()!='\n');
+    if(holder!='\n' && holder!=EOF)
+    {
+        char waste;
+        while((waste=getchar())!='\n' && waste!=EOF);
+    }
 
     if(holder>='0'&&holder<='8')
     {
@@ -133,6 +137,13 @@ unsigned int ask_tile_internal(void)
 }
 #define ask_tile() ask_tile_internal()
 
+void move_maker_internal(char *board, char symbol)
+{
+    while(make_move(board,ask_tile(),symbol)==INVALIDBOARD);
+    return;
+}
+#define move_maker(board,symbol) move_maker_internal(board,symbol)
+
 typedef struct
 {
     char symbol;
@@ -140,41 +151,48 @@ typedef struct
 } 
 Player;
 
+Player *player_initializer(void)
+{
+    Player *new_player = malloc(sizeof(Player));
+    fgets(new_player->name,sizeof(new_player->name),stdin);
+    new_player->name[strcspn(new_player->name,"\n")] = '\0';
+    return new_player;
+}
+
 void two_player_game_internal()
 {
-    Player player1;
-    puts("Enter the name of player 1");
-    scanf("%26s",player1.name);
-    player1.symbol = 'X';
+    puts("Enter Player 1 Name:");
+    Player* player1 = player_initializer();
+    player1->symbol = 'X';
 
-    Player player2;
-    puts("Enter the name of player 2");
-    scanf("%26s",player2.name);
-    player2.symbol = 'O';
+    puts("Enter Player 2 Name:");
+    Player* player2 = player_initializer();
+    player2->symbol = 'O';
 
     char *myboard =  create_board();
     print_board(myboard);
 
     for(unsigned int i = 0; i<9; i++)
     {
-        Player *turn = i%2==0 ? &player1 : &player2;
+        Player *turn = i%2==0 ? player1 : player2;
         printf("%s to play\n" , turn->name);
-        MoveStatus status_of_play = (myboard,ask_tile(),turn->symbol);
-        if(status_of_play!=VALIDBOARD)
+        move_maker(myboard,turn->symbol);
+        print_board(myboard);
+        if(win_check(myboard,turn->symbol)==turn->symbol)
         {
-            puts("Invalid Move");
+            printf("%s Wins",turn->name);
             break;
-        }
-        else 
-        {
-
+            destroy_board(myboard);
+            return;
         }
     }
+    puts("Drawn Game");
     destroy_board(myboard);
+    return;
 }
 
 int main(int argc, char *argv[])
 {
-    
+    two_player_game_internal();
     return EXIT_SUCCESS;
 }
