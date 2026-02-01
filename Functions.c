@@ -12,6 +12,7 @@ char *create_board_internal(void)
     memset(board,' ',9);
     return board;
 }
+#define create_board(void) create_board_internal(void)
 
 void destroy_board_internal(char **board)
 {
@@ -20,6 +21,7 @@ void destroy_board_internal(char **board)
     *board=nullptr;
     return;
 }
+#define destroy_board(board) destroy_board_internal((char **)(&board))
 
 int main(int argc, char *argv[])
 {
