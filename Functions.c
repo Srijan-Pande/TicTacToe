@@ -48,9 +48,10 @@ void destroy_board_internal(char **board)
 
 void print_board_internal(char *board)
 {
+    if(board==nullptr)return;
     for(unsigned int i = 0; i<9; i++)
     {
-        printf("%c",board[i]);
+        printf("%c ",board[i]);
         if(i%3==2)
         {
             puts("");
@@ -60,7 +61,7 @@ void print_board_internal(char *board)
 }
 #define print_board(board) print_board_internal(board)
 
-char win_check(char *board,char symbol)
+char win_check_internal(char *board,char symbol)
 {
     if(!board)return '\0';
 
@@ -88,9 +89,18 @@ char win_check(char *board,char symbol)
 
     return ' ';
 }
+#define win_check(board,symbol) win_check_internal(board,symbol)
+
+void make_move_internal(char *board, unsigned int tile, char symbol)
+{
+    if(board==nullptr)return;
+    board[0+tile]=symbol;
+    return;
+}
+#define make_move(board,tile,symbol) make_move_internal(board,tile,symbol)
 
 int main(int argc, char *argv[])
 {
-    
+
     return EXIT_SUCCESS;
 }
