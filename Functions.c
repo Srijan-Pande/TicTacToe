@@ -40,7 +40,7 @@ char *create_board_internal(void)
 
 void destroy_board_internal(char **board)
 {
-    if(!board||!*board)return;
+    if(board==nullptr || *board==nullptr)return;
     free(*board);
     *board=nullptr;
     return;
@@ -95,7 +95,8 @@ char win_check_internal(char *board,char symbol)
 void make_move_internal(char *board, unsigned int tile, char symbol)
 {
     if(board==nullptr)return;
-    board[0+tile]=symbol;
+    if(tile<0||tile>8)return;
+    board[tile]=symbol;
     return;
 }
 #define make_move(board,tile,symbol) make_move_internal(board,tile,symbol)
@@ -120,8 +121,36 @@ unsigned int ask_move_internal(void)
 }
 #define ask_move() ask_move_internal()
 
+void play_game_internal(void)
+{
+    char *myboard = create_board();
+    char player;
+    print_board(myboard);
+    for(int i = 0; i<9; i++)
+    {
+        if(i%2==0)
+        {
+            puts("Player X to play");
+            player = 'X';
+        }
+        else{
+            puts("Player O to play");
+            player = 'O';
+        }
+        make_move(myboard,ask_move(),player);
+        print_board(myboard);
+        if(win_check(myboard,player)==player)
+        {
+            printf("Player %c Wins!",player);
+            break;
+        }
+    }
+    destroy_board(myboard);
+}
+#define play_game() play_game_internal()
+
 int main(int argc, char *argv[])
 {
-
+    play_game();
     return EXIT_SUCCESS;
 }
