@@ -5,6 +5,7 @@
 #include<stdbool.h>
 #include<errno.h>
 #include<limits.h>
+#include<stdint.h>
 
 /*
     L C R
@@ -92,16 +93,27 @@ char win_check_internal(char *board,char symbol)
 }
 #define win_check(board,symbol) win_check_internal(board,symbol)
 
-void make_move_internal(char *board, unsigned int tile, char symbol)
+typedef enum
 {
-    if(board==nullptr)return;
-    if(tile<0||tile>8)return;
+    NULLBOARD = 0,
+    VALIDBOARD = 1
+} 
+MoveStatus;
+
+MoveStatus make_move_internal(char *board, unsigned int tile, char symbol)
+{
+    if(board==nullptr)return NULLBOARD;
+    if((tile<0||tile>8)||(board[tile]=='X'||board[tile]=='O'))
+    {
+        puts("Illegal Move");
+
+    }
     board[tile]=symbol;
-    return;
+    return VALIDBOARD;
 }
 #define make_move(board,tile,symbol) make_move_internal(board,tile,symbol)
 
-unsigned int ask_move_internal(void)
+unsigned int ask_tile_internal(void)
 {
     puts("Enter Your Move:");
     char holder = getchar();
@@ -119,38 +131,50 @@ unsigned int ask_move_internal(void)
         return UINT_MAX;
     }
 }
-#define ask_move() ask_move_internal()
+#define ask_tile() ask_tile_internal()
 
-void play_game_internal(void)
+typedef struct
 {
-    char *myboard = create_board();
-    char player;
+    char symbol;
+    char name[27];
+} 
+Player;
+
+void two_player_game_internal()
+{
+    Player player1;
+    puts("Enter the name of player 1");
+    scanf("%26s",player1.name);
+    player1.symbol = 'X';
+
+    Player player2;
+    puts("Enter the name of player 2");
+    scanf("%26s",player2.name);
+    player2.symbol = 'O';
+
+    char *myboard =  create_board();
     print_board(myboard);
-    for(int i = 0; i<9; i++)
+
+    for(unsigned int i = 0; i<9; i++)
     {
-        if(i%2==0)
+        Player *turn = i%2==0 ? &player1 : &player2;
+        printf("%s to play\n" , turn->name);
+        MoveStatus status_of_play = (myboard,ask_tile(),turn->symbol);
+        if(status_of_play!=VALIDBOARD)
         {
-            puts("Player X to play");
-            player = 'X';
-        }
-        else{
-            puts("Player O to play");
-            player = 'O';
-        }
-        make_move(myboard,ask_move(),player);
-        print_board(myboard);
-        if(win_check(myboard,player)==player)
-        {
-            printf("Player %c Wins!",player);
+            puts("Invalid Move");
             break;
+        }
+        else 
+        {
+
         }
     }
     destroy_board(myboard);
 }
-#define play_game() play_game_internal()
 
 int main(int argc, char *argv[])
 {
-    play_game();
+    
     return EXIT_SUCCESS;
 }
