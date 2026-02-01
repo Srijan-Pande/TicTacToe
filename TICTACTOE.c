@@ -27,6 +27,13 @@ New - N
 Exit - E
 */
 
+typedef struct 
+{
+    char name[27];
+    char symbol;
+} 
+Player;
+
 char *create_board_internal(void);
 void destroy_board_internal(char **board);
 void print_board_internal(char *board);
@@ -34,6 +41,8 @@ char win_check_internal(char *board,char symbol);
 bool make_move_internal(char *board, unsigned int tile, char symbol);
 unsigned int ask_tile_internal(void);
 void move_maker_internal(char *board, char symbol);
+Player *player_initializer_internal(void);
+void two_player_game_internal();
 
 char *create_board_internal(void)
 {
@@ -145,13 +154,6 @@ void move_maker_internal(char *board, char symbol)
 }
 #define move_maker(board,symbol) move_maker_internal(board,symbol)
 
-typedef struct 
-{
-    char name[27];
-    char symbol;
-} 
-Player;
-
 Player *player_initializer_internal(void)
 {
     Player *new_player = malloc(sizeof(Player));
@@ -193,9 +195,3 @@ void two_player_game_internal()
     return;
 }
 #define two_player_game() two_player_game_internal()
-
-int main(int argc, char* argv[])
-{
-    two_player_game();
-    return EXIT_SUCCESS;
-}
